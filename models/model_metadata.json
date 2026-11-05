@@ -1,0 +1,340 @@
+{
+  "created_at": "2026-11-05T15:30:23.550831+00:00",
+  "dataset_url": "https://raw.githubusercontent.com/4GeeksAcademy/k-means-project-tutorial/main/housing.csv",
+  "dataset_path": "/Users/janetcurrie/Desktop/Janet/AI Engineering Stuff/Coding Practice/Local Git Repositories/k-means-learning-Janet-Currie-mi-ai-2/housing.csv",
+  "dataset_sha256": "4c318b5bd15009d170be9bd1afc152f6dcf41b1de941bbfa59643bdbfe9130a9",
+  "file_size_bytes": 1959698,
+  "raw_column_list": [
+    "MedInc",
+    "HouseAge",
+    "AveRooms",
+    "AveBedrms",
+    "Population",
+    "AveOccup",
+    "Latitude",
+    "Longitude",
+    "MedHouseVal"
+  ],
+  "retained_row_count": 20640,
+  "feature_names": [
+    "Latitude",
+    "Longitude",
+    "MedInc"
+  ],
+  "duplicate_feature_rows_kept": 5,
+  "coordinate_flags": 0,
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "shuffle": true,
+    "train_rows": 16512,
+    "test_rows": 4128
+  },
+  "kmeans": {
+    "n_clusters": 6,
+    "init": "k-means++",
+    "n_init": 10,
+    "random_state": 42,
+    "n_iter": 29,
+    "inertia": 8069.187859270176
+  },
+  "cluster_profiles": [
+    {
+      "cluster": 0,
+      "count": 1321,
+      "percent": 8.000242248062015,
+      "latitude_mean": 36.081627554882665,
+      "latitude_median": 36.3,
+      "longitude_mean": -119.72759273277819,
+      "longitude_median": -119.71,
+      "medinc_mean": 2.6250236184708555,
+      "medinc_median": 2.5556,
+      "centroid_latitude": 36.08289393939394,
+      "centroid_longitude": -119.72774242424242,
+      "centroid_medinc": 2.6240078030303025
+    },
+    {
+      "cluster": 1,
+      "count": 3380,
+      "percent": 20.469961240310077,
+      "latitude_mean": 33.8678875739645,
+      "latitude_median": 33.92,
+      "longitude_mean": -118.02418934911243,
+      "longitude_median": -118.04,
+      "medinc_mean": 5.311771272189349,
+      "medinc_median": 5.1046499999999995,
+      "centroid_latitude": 33.86767709563164,
+      "centroid_longitude": -118.02459858323495,
+      "centroid_medinc": 5.305131552538371
+    },
+    {
+      "cluster": 2,
+      "count": 453,
+      "percent": 2.7434593023255816,
+      "latitude_mean": 34.900551876379694,
+      "latitude_median": 34.11,
+      "longitude_mean": -119.23701986754968,
+      "longitude_median": -118.43,
+      "medinc_mean": 10.443602207505519,
+      "medinc_median": 10.1241,
+      "centroid_latitude": 34.893070175438595,
+      "centroid_longitude": -119.22813596491228,
+      "centroid_medinc": 10.428292324561404
+    },
+    {
+      "cluster": 3,
+      "count": 3931,
+      "percent": 23.806928294573645,
+      "latitude_mean": 38.345975578733146,
+      "latitude_median": 38.01,
+      "longitude_mean": -121.90072500635972,
+      "longitude_median": -121.98,
+      "medinc_mean": 2.8350436530145,
+      "medinc_median": 2.8854,
+      "centroid_latitude": 38.34545893719807,
+      "centroid_longitude": -121.9004169844902,
+      "centroid_medinc": 2.8356639460971262
+    },
+    {
+      "cluster": 4,
+      "count": 2239,
+      "percent": 13.55983527131783,
+      "latitude_mean": 37.70185797230907,
+      "latitude_median": 37.68,
+      "longitude_mean": -121.9390531487271,
+      "longitude_median": -122.02,
+      "medinc_mean": 5.518263644484144,
+      "medinc_median": 5.2203,
+      "centroid_latitude": 37.70219043361645,
+      "centroid_longitude": -121.93962896736701,
+      "centroid_medinc": 5.519572016092981
+    },
+    {
+      "cluster": 5,
+      "count": 5188,
+      "percent": 31.419573643410853,
+      "latitude_mean": 33.816489976869704,
+      "latitude_median": 33.97,
+      "longitude_mean": -117.81673284502698,
+      "longitude_median": -118.07,
+      "medinc_mean": 2.7807768889745565,
+      "medinc_median": 2.8475,
+      "centroid_latitude": 33.816693704132874,
+      "centroid_longitude": -117.81643491695635,
+      "centroid_medinc": 2.7783484163769794
+    }
+  ],
+  "cluster_interpretations": [
+    "Cluster ids are nominal labels, so a higher number is not a higher rank.",
+    "Cluster sizes do not need to be equal.",
+    "Centroids are mathematical centers and may not match an actual census block group.",
+    "MedInc stays in the file's own units. Values in this dataset are capped near 15.",
+    "In this California dataset, farther west is toward the coast and farther east is inland.",
+    "Cluster 0 has 1321 training rows (8.0%). It sits farther north and farther west, with lower median income relative to the training medians.",
+    "Cluster 1 has 3380 training rows (20.5%). It sits farther south and farther east, with higher median income relative to the training medians.",
+    "Cluster 2 has 453 training rows (2.7%). It sits farther south and farther east, with higher median income relative to the training medians.",
+    "Cluster 3 has 3931 training rows (23.8%). It sits farther north and farther west, with lower median income relative to the training medians.",
+    "Cluster 4 has 2239 training rows (13.6%). It sits farther north and farther west, with higher median income relative to the training medians.",
+    "Cluster 5 has 5188 training rows (31.4%). It sits farther south and farther east, with lower median income relative to the training medians."
+  ],
+  "supervised_selection": {
+    "n_splits": 5,
+    "winner": "random_forest",
+    "candidates": {
+      "logistic_regression": {
+        "accuracy_mean": 0.9901285526272117,
+        "accuracy_std": 0.0017913771892917596,
+        "macro_f1_mean": 0.9834196265378796,
+        "macro_f1_std": 0.004471867583106621,
+        "fit_time_mean": 0.216399621963501
+      },
+      "decision_tree": {
+        "accuracy_mean": 0.9915212809675251,
+        "accuracy_std": 0.0015793926716439462,
+        "macro_f1_mean": 0.9871474258716745,
+        "macro_f1_std": 0.0032365539788409827,
+        "fit_time_mean": 0.039545202255249025
+      },
+      "random_forest": {
+        "accuracy_mean": 0.9938832289644365,
+        "accuracy_std": 0.0007011890392918533,
+        "macro_f1_mean": 0.9904610352734968,
+        "macro_f1_std": 0.0011072603469843853,
+        "fit_time_mean": 1.252143096923828
+      }
+    },
+    "rule": "Highest mean macro F1 on stratified training folds. Ties keep the simpler model: logistic regression, decision tree, then random forest."
+  },
+  "holdout_fidelity": {
+    "accuracy": 0.9951550387596899,
+    "balanced_accuracy": 0.9919653140232977,
+    "macro_precision": 0.9948403907060617,
+    "macro_recall": 0.9919653140232977,
+    "macro_f1": 0.9933820167935865,
+    "weighted_precision": 0.9951660199766511,
+    "weighted_recall": 0.9951550387596899,
+    "weighted_f1": 0.9951534728163388,
+    "confusion_matrix": [
+      [
+        332,
+        1,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        1,
+        826,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        110,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        955,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        512,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1373
+      ]
+    ],
+    "per_class": [
+      {
+        "cluster": 0,
+        "precision": 0.9940119760479041,
+        "recall": 0.9851632047477745,
+        "f1": 0.9895678092399404,
+        "support": 337
+      },
+      {
+        "cluster": 1,
+        "precision": 0.9951807228915662,
+        "recall": 0.9963811821471653,
+        "f1": 0.9957805907172996,
+        "support": 829
+      },
+      {
+        "cluster": 2,
+        "precision": 1.0,
+        "recall": 0.9821428571428571,
+        "f1": 0.990990990990991,
+        "support": 112
+      },
+      {
+        "cluster": 3,
+        "precision": 0.9947916666666666,
+        "recall": 0.9927234927234927,
+        "f1": 0.9937565036420395,
+        "support": 962
+      },
+      {
+        "cluster": 4,
+        "precision": 0.9865125240847784,
+        "recall": 0.9961089494163424,
+        "f1": 0.9912875121006777,
+        "support": 514
+      },
+      {
+        "cluster": 5,
+        "precision": 0.9985454545454545,
+        "recall": 0.9992721979621543,
+        "f1": 0.9989086940705711,
+        "support": 1374
+      }
+    ],
+    "easiest_cluster": 5,
+    "hardest_cluster": 0,
+    "missing_test_support": []
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.9940119760479041,
+      "recall": 0.9851632047477745,
+      "f1-score": 0.9895678092399404,
+      "support": 337.0
+    },
+    "1": {
+      "precision": 0.9951807228915662,
+      "recall": 0.9963811821471653,
+      "f1-score": 0.9957805907172996,
+      "support": 829.0
+    },
+    "2": {
+      "precision": 1.0,
+      "recall": 0.9821428571428571,
+      "f1-score": 0.990990990990991,
+      "support": 112.0
+    },
+    "3": {
+      "precision": 0.9947916666666666,
+      "recall": 0.9927234927234927,
+      "f1-score": 0.9937565036420395,
+      "support": 962.0
+    },
+    "4": {
+      "precision": 0.9865125240847784,
+      "recall": 0.9961089494163424,
+      "f1-score": 0.9912875121006777,
+      "support": 514.0
+    },
+    "5": {
+      "precision": 0.9985454545454545,
+      "recall": 0.9992721979621543,
+      "f1-score": 0.9989086940705711,
+      "support": 1374.0
+    },
+    "accuracy": 0.9951550387596899,
+    "macro avg": {
+      "precision": 0.9948403907060617,
+      "recall": 0.9919653140232977,
+      "f1-score": 0.9933820167935865,
+      "support": 4128.0
+    },
+    "weighted avg": {
+      "precision": 0.9951660199766511,
+      "recall": 0.9951550387596899,
+      "f1-score": 0.9951534728163388,
+      "support": 4128.0
+    }
+  },
+  "versions": {
+    "python": "3.13.14",
+    "pandas": "3.1.1",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0"
+  },
+  "artifacts": {
+    "kmeans_pipeline": "kmeans_pipeline.joblib",
+    "supervised_classifier": "supervised_classifier.joblib",
+    "metadata": "model_metadata.json"
+  },
+  "reload_verification": "passed",
+  "limitation": "Holdout metrics measure agreement with K-Means pseudo-labels. They are not accuracy against human-labeled regions."
+}

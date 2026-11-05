@@ -1,112 +1,173 @@
-# Data Science Project Boilerplate
+# California Housing Area Groups with K-Means
 
-This boilerplate is designed to kickstart data science projects by providing a basic setup for database connections, data processing, and machine learning model development. It includes a structured folder organization for your datasets and a set of pre-defined Python packages necessary for most data science tasks.
+This project groups California census block groups by location and median income, then trains a classifier to reproduce those machine-made group labels.
 
-## Structure
+Each row in `housing.csv` is one census block group from the 1990 census, not one house. The exercise does not predict house value. It shows how an unsupervised model can label data that a supervised model then imitates.
 
-The project is organized as follows:
+The tutorial source is the [4Geeks Academy K-Means project](https://github.com/4GeeksAcademy/k-means-project-tutorial). The canonical dataset URL is:
 
-- **`src/app.py`** → Main Python script where your project will run.
-- **`src/explore.ipynb`** → Notebook for exploration and testing. Once exploration is complete, migrate the clean code to `app.py`.
-- **`src/utils.py`** → Auxiliary functions, such as database connection.
-- **`requirements.txt`** → List of required Python packages.
-- **`models/`** → Will contain your SQLAlchemy model classes.
-- **`data/`** → Stores datasets at different stages:
-  - **`data/raw/`** → Raw data.
-  - **`data/interim/`** → Temporarily transformed data.
-  - **`data/processed/`** → Data ready for analysis.
+```text
+https://raw.githubusercontent.com/4GeeksAcademy/k-means-project-tutorial/main/housing.csv
+```
 
+This repository uses the local copy at `housing.csv`.
 
-## ⚡ Initial Setup in Codespaces (Recommended)
+## Feature contract
 
-No manual setup is required, as **Codespaces is automatically configured** with the predefined files created by the academy for you. Just follow these steps:
+The models use these columns, in this order:
 
-1. **Wait for the environment to configure automatically**.
-   - All necessary packages and the database will install themselves.
-   - The automatically created `username` and `db_name` are in the **`.env`** file at the root of the project.
-2. **Once Codespaces is ready, you can start working immediately**.
+| Position | Column | Meaning |
+|---:|---|---|
+| 1 | `Latitude` | Latitude of the census block group |
+| 2 | `Longitude` | Longitude of the census block group |
+| 3 | `MedInc` | Median income in the file's own units |
 
+`MedInc` is left in those file units. In this file it runs from about 0.50 to 15.00, with a cap near 15. Cluster ids `0` through `5` are nominal labels. A higher number is not a higher rank, and the same grouping can receive different numbers if the model is refit without the same seed.
 
-## 💻 Local Setup (Only if you can't use Codespaces)
+## Setup
 
-**Prerequisites**
-
-Make sure you have Python 3.11+ installed on your machine. You will also need pip to install the Python packages.
-
-**Installation**
-
-Clone the project repository to your local machine.
-
-Navigate to the project directory and install the required Python packages:
+Use Python 3.11 or newer. This run used Python 3.13.14.
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Create a database (if necessary)**
+## Run
 
-Create a new database within the Postgres engine by customizing and executing the following command:
-
-```bash
-$ psql -U postgres -c "DO \$\$ BEGIN 
-    CREATE USER my_user WITH PASSWORD 'my_password'; 
-    CREATE DATABASE my_database OWNER my_user; 
-END \$\$;"
-```
-Connect to the Postgres engine to use your database, manipulate tables, and data:
-
-```bash
-$ psql -U my_user -d my_database
-```
-
-Once inside PSQL, you can create tables, run queries, insert, update, or delete data, and much more!
-
-**Environment Variables**
-
-Create a .env file in the root directory of the project to store your environment variables, such as your database connection string:
-
-```makefile
-DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DB_NAME>"
-
-#example
-DATABASE_URL="postgresql://my_user:my_password@localhost:5432/my_database"
-```
-
-## Running the Application
-
-To run the application, execute the app.py script from the root directory of the project:
+From the repository root:
 
 ```bash
 python src/app.py
 ```
 
-## Adding Models
+Check the workflow contracts with:
 
-To add SQLAlchemy model classes, create new Python script files within the models/ directory. These classes should be defined according to your database schema.
-
-Example model definition (`models/example_model.py`):
-
-```py
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
-
-Base = declarative_base()
-
-class ExampleModel(Base):
-    __tablename__ = 'example_table'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True)
+```bash
+pytest -q
 ```
 
-## Working with Data
+`src/app.py` is the reproducible path. `src/explore.ipynb` repeats the loading, clustering, and figures for reading. It does not need to be run in a particular order to reproduce the saved models.
 
-You can place your raw datasets in the data/raw directory, intermediate datasets in data/interim, and processed datasets ready for analysis in data/processed.
+The script does not use the template database connection in `src/utils.py`.
 
-To process data, you can modify the app.py script to include your data processing steps, using pandas for data manipulation and analysis.
+## Split, scaling, and leakage
 
-## Contributors
+The validated three-feature table is split before any preprocessing or model is fit.
 
-This template was built as part of the [Data Science and Machine Learning Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning) by 4Geeks Academy by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Learn more about [4Geeks Academy BootCamp programs](https://4geeksacademy.com/us/programs) here.
+- 20,640 rows kept
+- 5 duplicate three-feature rows kept and reported
+- 0 coordinate flags (latitude outside -90 to 90, or longitude outside -180 to 180)
+- Training rows: 16,512
+- Test rows: 4,128
+- `test_size=0.20`, `random_state=42`, `shuffle=True`
+- No stratification, because cluster labels do not exist yet
 
-Other templates and resources like this can be found on the school's GitHub page.
+`StandardScaler` is fit on the training rows only. K-Means is fit on those scaled training rows only. Test rows are transformed and labeled with that same fitted pipeline.
+
+K-Means uses six clusters because the tutorial requires six. The setting is not replaced when another cluster count might score differently.
+
+```text
+n_clusters=6
+init=k-means++
+n_init=10
+random_state=42
+```
+
+This run converged in 29 iterations. Training inertia was 8069.19.
+
+## What the six clusters show
+
+Profiles below use the training rows. Medians describe the rows in each cluster. Centroids are the cluster centers after they are converted back to the original units. A centroid may not be a real census block group, and the clusters do not have to be the same size.
+
+| Cluster | Train rows | Train % | Test rows | Median latitude | Median longitude | Median MedInc | Centroid (lat, lon, MedInc) |
+|---:|---:|---:|---:|---:|---:|---:|---|
+| 0 | 1,321 | 8.0 | 337 | 36.30 | -119.71 | 2.56 | 36.08, -119.73, 2.62 |
+| 1 | 3,380 | 20.5 | 829 | 33.92 | -118.04 | 5.10 | 33.87, -118.02, 5.31 |
+| 2 | 453 | 2.7 | 112 | 34.11 | -118.43 | 10.12 | 34.89, -119.23, 10.43 |
+| 3 | 3,931 | 23.8 | 962 | 38.01 | -121.98 | 2.89 | 38.35, -121.90, 2.84 |
+| 4 | 2,239 | 13.6 | 514 | 37.68 | -122.02 | 5.22 | 37.70, -121.94, 5.52 |
+| 5 | 5,188 | 31.4 | 1,374 | 33.97 | -118.07 | 2.85 | 33.82, -117.82, 2.78 |
+
+Relative to the training medians:
+
+- Clusters 3 and 4 sit farther north and farther west. Cluster 4 has higher median income. Cluster 3 has lower median income and its rows extend farther north.
+- Cluster 0 sits between those northern groups and the southern groups. Its median income is lower.
+- Clusters 1 and 5 sit farther south and farther east. They overlap on the map. Cluster 1 has higher median income, and cluster 5 has lower median income. Cluster 5 is the largest group.
+- Cluster 2 is a small southern group with much higher median income. Its income distribution reaches the file's cap near 15.
+
+Farther west in this California dataset is toward the coast, and farther east is inland. The map overlap is expected: two block groups can share a location and still fall in different clusters when their median incomes differ.
+
+![Training clusters](reports/figures/train_clusters.png)
+
+![Training and test clusters](reports/figures/train_test_clusters.png)
+
+![Income by cluster](reports/figures/income_by_cluster.png)
+
+Test markers land on the same geographic regions as the training points of the same color. That is a visual check of the shared label mapping, not proof of a real-world boundary.
+
+## Supervised imitation
+
+The classifier sees the same three raw features and learns the integer cluster id produced by the training-fitted K-Means pipeline. Candidates were compared with the same 5-fold stratified cross-validation on the training labels. The winner is the highest mean macro F1. A tie would keep the simpler model, in this order: logistic regression, decision tree, random forest.
+
+| Candidate | Mean accuracy | Accuracy std | Mean macro F1 | Macro F1 std |
+|---|---:|---:|---:|---:|
+| Logistic regression | 0.9901 | 0.0018 | 0.9834 | 0.0045 |
+| Decision tree | 0.9915 | 0.0016 | 0.9871 | 0.0032 |
+| Random forest | 0.9939 | 0.0007 | 0.9905 | 0.0011 |
+
+The selected model is the random forest. Logistic regression already agrees closely with K-Means, which fits clusters that have linear boundaries in scaled space. The forest was a little more faithful on the training folds, so the selection rule keeps it. The final forest is refit on all 16,512 training rows. The test rows were not used to choose it.
+
+Holdout agreement with the K-Means labels:
+
+| Metric | Score |
+|---|---:|
+| Accuracy | 0.9952 |
+| Balanced accuracy | 0.9920 |
+| Macro precision | 0.9948 |
+| Weighted precision | 0.9952 |
+| Macro recall | 0.9920 |
+| Weighted recall | 0.9952 |
+| Macro F1 | 0.9934 |
+| Weighted F1 | 0.9952 |
+
+Every test cluster has support. Cluster 5 is the easiest to imitate (F1 0.9989, support 1,374). Cluster 0 is the hardest (F1 0.9896, support 337). The largest off-diagonal counts are 6 rows of cluster 3 predicted as cluster 4, and 3 rows of cluster 0 predicted as cluster 3. Those pairs sit near each other geographically and differ more by income.
+
+![Confusion matrix](reports/figures/supervised_confusion_matrix.png)
+
+These scores measure how closely the classifier reproduces K-Means labels. They are not accuracy against human-labeled regions. The project has no ground-truth region or socioeconomic class labels.
+
+## Saved artifacts
+
+| File | Contents |
+|---|---|
+| `models/kmeans_pipeline.joblib` | Training-fitted scaler and six-cluster K-Means model |
+| `models/supervised_classifier.joblib` | Random forest refit on the training cluster labels |
+| `models/model_metadata.json` | Source, split, profiles, metrics, and package versions |
+| `data/processed/housing_train_clustered.csv` | Training features plus integer `cluster` |
+| `data/processed/housing_test_clustered.csv` | Test features plus integer `cluster` |
+
+Reload both joblib files and predict the same sample before treating them as usable. This run did that, and the reloaded predictions matched the predictions made before saving.
+
+Joblib uses pickle. Load these files only from a trusted source, with compatible package versions. The saved files are not a substitute for the training code.
+
+Versions for this run:
+
+- Python 3.13.14
+- pandas 3.1.1
+- NumPy 2.5.4
+- scikit-learn 1.9.1
+- joblib 1.6.0
+
+## Limitations
+
+- The cluster labels were created by K-Means. They are not verified social, economic, or policy categories.
+- Six clusters are a tutorial requirement.
+- Longitude and latitude alone do not show the income split. Read the income plot with the map.
+- Five repeated three-feature rows were kept because a repeated census record is not automatically an error.
+- `MedHouseVal` and the other housing columns are not model inputs.
+
+## Course delivery
+
+After review, commit the project, push it to the learner repository, and submit that repository link through 4Geeks.com. Pushing and submitting need the learner's own authorization and credentials.
